@@ -7,6 +7,7 @@ import string
 probs = { }
 sentence_starters = {}
 clause_starters = {}
+output_length = 200
 
 def main():
 	source_text = """
@@ -55,18 +56,18 @@ And now I would like to address a word, if I may, to the young people of this Na
 	# generate some text
 	# TODO: weighting!
 	generated_list = [random.choice(create_sample_pool(sentence_starters))]
-	for i in range(100):
+	for i in range(output_length):
 		last_word = generated_list[-1]
 		next_word = ""
+		if contains_character(sentence_delimiters, last_word) or last_word not in probs:
+			next_word = random.choice(create_sample_pool(sentence_starters))
+		if contains_character(clause_delimiters, last_word):
+			next_word = random.choice(create_sample_pool(clause_starters))
 		if last_word in probs:
 			next_word = random.choice(create_sample_pool(probs[last_word]))
-		else:
-			next_word = random.choice(create_sample_pool(sentence_starters))
 		generated_list.append(next_word)
 	# numpy.random.sample(sentence_starters.keys)
 	print(string.join(generated_list, " "))
-
-
 
 def contains_character(character_list, word):
 	for character in character_list:
