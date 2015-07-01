@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import string
 import sys
 import argparse
@@ -22,7 +23,7 @@ def take_input():
   return source_text
 
 def clean(source_text):
-    # fix punctuation
+  # fix punctuation
   sentence_delimiters = [".", "?", "!"]
   clause_delimiters = ["...", ";", "--"]
   text_buffer = source_text
