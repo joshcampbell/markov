@@ -71,6 +71,7 @@ class Markov_Class:
     print "\n" * 100
     print(string.join(generated_list, " "))
 
-
-
-
+    })
+    }
+  }
+}
