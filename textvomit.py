@@ -15,8 +15,8 @@ def main():
   if args.markov:
     output_length = args.markov
     markov_obj.generate_output(word_array, output_length)
-  # if args.cutup:
-  #   cutup.generate_output(word_array, args.cutup[0], args.cutup[1])
+  if args.cutup:
+    cutup.generate_output(word_array, args.cutup[0], args.cutup[1])
   
 def take_input():
   source_text = string.join(sys.stdin.readlines(), " ")

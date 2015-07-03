@@ -6,7 +6,7 @@ import string
 import sys
 
 class cutup:
-  def generate_output(word_array, block_min_size, block_max_size):
+  def generate_output(__, word_array, block_min_size, block_max_size):
     current_position = 0
     chunks = []
     while True:
