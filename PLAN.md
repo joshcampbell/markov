@@ -14,3 +14,10 @@
 A probability table is a hash.  Each hash value is a word occuring in the source text. Each hash key is a tuple containing a count of occurences of that word at 0 and nested probability table at 1.
 
 When building a table, you should limit the maximum depth. For every word, you will need to
+
+# Ideas
+
+- Use chunks of existing texts to fill in a predefined meter.
+- Twitter & IRC Bots
+- Large-scale subjective analysis via mechanical turk or something
+- 

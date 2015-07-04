@@ -18,7 +18,7 @@ import sys
 # </pre>
 
 def is_markov_node(a_tuple):
-    return a_tuple[0] is list and a_tuple[1] is dict
+    return a_tuple[0] is int and a_tuple[1] is dict
 
 def new_markov_node(count=0):
     return [count, {}]
@@ -55,9 +55,9 @@ class MarkovDictionary:
             self.register((last_word, word))
             last_word = word
 
-    def register(self, word_tuple):
+    def register(self, word_tuple, depth=2):
         # FIXME needs decomposition
-        if len(word_tuple) is not 2:
+        if len(word_tuple) is not depth:
             return
         first_word = word_tuple[0]
         second_word = word_tuple[1]
