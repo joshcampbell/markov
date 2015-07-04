@@ -46,17 +46,18 @@ class MarkovDictionary:
         for source_text in source_texts:
             self.feed(source_text)
 
-    def feed(self, source_text):
+    def engorge(self, source_text):
         last_word = False
         for word in split_text(source_text):
             if last_word is False:
                 last_word = word
                 continue
-            self.register((last_word, word))
+            self.__register_word_tuple((last_word, word))
             last_word = word
 
-    def register(self, word_tuple, depth=2):
+    def __register_word_tuple(self, word_tuple, depth=2):
         # FIXME needs decomposition
+        # TODO implement depth
         if len(word_tuple) is not depth:
             return
         first_word = word_tuple[0]
@@ -74,6 +75,6 @@ class MarkovDictionary:
             branch_node = new_markov_node(1)
             dict_of(root_node)[second_word] = branch_node
 
-    def expectorate(self, length):
+    def disgorge(self, length):
         # sample from the tree, etc.
         return
