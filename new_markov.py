@@ -26,10 +26,10 @@ TOLERABLE_PUNCTUATION = list(" !.?")
 
 # let's try thinking about it in these terms:
 
-# ProbNode: a list of [count, ProbTree]
+# ProbNode: a list of [int, ProbTree]
 #   increment
 #   get_subtree
-# ProbTree: a dict of string => ProbNode
+# ProbTree: a dict of { string => ProbNode }
 #   random_word
 #   upsert_word
 #   __insert_word
@@ -61,6 +61,10 @@ def choices(markov_dict):
       words.append(name)
   return words 
 
+def register_word(prob_tree, word):
+  if word in prob_tree.keys(): increment(prob_tree[word])
+  else: prob_tree[word] = new_markov_node(1)
+        
 # these text tools belong in a namespace
 
 def split_text(text):
@@ -88,38 +92,32 @@ list2dict = lambda lis: dict(lis)
 class MarkovDictionary:
     """ Manages a nested dict of contextual word occurance probabilities """
     def __init__(self, *source_texts):
-        self.source_texts = source_texts
+        self.source_texts = []
         self.prob_tree = {}
         for source_text in source_texts:
             self.engorge(source_text)
 
     def engorge(self, source_text):
+        self.source_texts += [source_text]
         last_word = False
         for word in split_text(source_text):
             if last_word is False:
                 last_word = word
                 continue
-            self.__register_word_tuple((last_word, word))
-            last_word = word
-
-    def __register_word_tuple(self, word_tuple, depth=2):
-        # TODO implement depth
-        if len(word_tuple) is not depth:
-            return
-        first_word, second_word = word_tuple
-        # increment or create the entry for first word in the tuple
-        if first_word in self.prob_tree.keys(): increment(self.prob_tree[first_word])
-        else: self.prob_tree[first_word] = new_markov_node(1)
-        # increment or create the entry for the second word, nested within
-        if second_word in words_in(root_node): increment(dict_of(root_node)[second_word])
-        else: dict_of(root_node)[second_word] = new_markov_node(1)
-        # FIXME: dry!
-        
+            else:
+              self.__register_word_tuple((last_word, word))
+              last_word = word
 
     def disgorge(self, length=666):
-      first_word = random.sample(self.prob_tree.keys(),1)[0]
+      first_word = random.choice(self.prob_tree.keys())
       words = [first_word]
       for i in range(1,length+1):
         last_word = words[-1]
         words += [random.choice(choices(dict_of(self.prob_tree[last_word])))]
       return string.join(words, ' ')
+
+    def __register_word_tuple(self, word_tuple):
+        first_word, second_word = word_tuple
+        register_word(self.prob_tree, first_word)
+        root_node = dict_of(self.prob_tree[first_word])
+        register_word(root_node, second_word)

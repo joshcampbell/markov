@@ -20,11 +20,13 @@ When building a table, you should limit the maximum depth.
 
 - Establish unit tests
   - Check libmorris for a template
-- Consider some kinds of punctuation as words?
 - Redo the word tuple registration algorithm to be recursive.
   - Allow a depth greater than two
   - Do we merge contextual probabilities with root probabilities?
     - Do we weigh them?
+- Get better at handling obscure unicode punctuation
+  - String#isalnum() lets a lot of shit through
+  - Consider some kinds of punctuation as words?
 
 # Ideas
 
