@@ -24,6 +24,16 @@ TOLERABLE_PUNCTUATION = list(" !.?")
 # composite data structure. i wonder how we should
 # clean them up ???????
 
+# let's try thinking about it in these terms:
+
+# ProbNode: a list of [count, ProbTree]
+#   increment
+#   get_subtree
+# ProbTree: a dict of string => ProbNode
+#   random_word
+#   upsert_word
+#   __insert_word
+
 def is_markov_node(a_tuple):
     return a_tuple[0] is int and a_tuple[1] is dict
 
@@ -93,24 +103,18 @@ class MarkovDictionary:
             last_word = word
 
     def __register_word_tuple(self, word_tuple, depth=2):
-        # FIXME needs decomposition
         # TODO implement depth
         if len(word_tuple) is not depth:
             return
-        first_word = word_tuple[0]
-        second_word = word_tuple[1]
-        if first_word in self.prob_tree.keys():
-            root_node = self.prob_tree[first_word]
-            increment(root_node)
-        else:
-            root_node = new_markov_node(1)
-            self.prob_tree[first_word] = root_node
-        if word_tuple[1] in words_in(root_node):
-            branch_node = dict_of(root_node)[second_word]
-            increment(branch_node)
-        else:
-            branch_node = new_markov_node(1)
-            dict_of(root_node)[second_word] = branch_node
+        first_word, second_word = word_tuple
+        # increment or create the entry for first word in the tuple
+        if first_word in self.prob_tree.keys(): increment(self.prob_tree[first_word])
+        else: self.prob_tree[first_word] = new_markov_node(1)
+        # increment or create the entry for the second word, nested within
+        if second_word in words_in(root_node): increment(dict_of(root_node)[second_word])
+        else: dict_of(root_node)[second_word] = new_markov_node(1)
+        # FIXME: dry!
+        
 
     def disgorge(self, length=666):
       first_word = random.sample(self.prob_tree.keys(),1)[0]
