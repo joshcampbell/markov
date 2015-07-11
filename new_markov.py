@@ -117,7 +117,7 @@ class MarkovDictionary:
       return string.join(words, ' ')
 
     def __register_word_tuple(self, word_tuple):
-        first_word, second_word = word_tuple
-        register_word(self.prob_tree, first_word)
-        root_node = dict_of(self.prob_tree[first_word])
-        register_word(root_node, second_word)
+      first_word, second_word = word_tuple
+      register_word(self.prob_tree, first_word)
+      root_node = dict_of(self.prob_tree[first_word])
+      register_word(root_node, second_word)
