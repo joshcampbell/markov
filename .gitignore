@@ -1,3 +1,7 @@
 .*~
 .*.sw*
+<<<<<<< HEAD
 tmp
+=======
+*.pyc
+>>>>>>> e7da3bbe9589224cb80d134edf5d92e44edeb618
