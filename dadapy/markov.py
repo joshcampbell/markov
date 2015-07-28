@@ -2,7 +2,6 @@ import json
 import random
 import string
 import sys
-from pprint import PrettyPrinter
 
 # # Is this a sensible data structure?
 #
@@ -79,10 +78,6 @@ def is_clean(letter):
   """ isalnum() means "is alphanumeric" """
   return char.isalnum() or char in TOLERABLE_PUNCTUATION
 
-def pprint(text):
-  #using defaults for now
-  PrettyPrinter().pprint(text)
-
 # these should also be in a module somewhere
 
 dict2list = lambda dic: [(k, v) for (k, v) in dic.iteritems()]
@@ -117,9 +112,6 @@ class MarkovDictionary:
         last_word = words[-1]
         words += [random.choice(choices(dict_of(self.prob_tree[last_word])))]
       return string.join(words, ' ')
-
-    def pretty_print(self, length=666):
-        print(disgorge(length))
 
     def __register_word_tuple(self, word_tuple):
       first_word, second_word = word_tuple
