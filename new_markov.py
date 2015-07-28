@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import json
 import random
 import string
@@ -97,6 +97,9 @@ class MarkovDictionary:
         for source_text in source_texts:
             self.engorge(source_text)
 
+    def eat_file(self, filename):
+       self.engorge(open("./fodder/%s"%filename).read()) 
+
     def engorge(self, source_text):
         self.source_texts += [source_text]
         last_word = False
@@ -115,6 +118,9 @@ class MarkovDictionary:
         last_word = words[-1]
         words += [random.choice(choices(dict_of(self.prob_tree[last_word])))]
       return string.join(words, ' ')
+
+    def pretty_print(self, length=666):
+        print(disgorge(length))
 
     def __register_word_tuple(self, word_tuple):
       first_word, second_word = word_tuple
