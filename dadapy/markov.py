@@ -97,24 +97,37 @@ class MarkovDictionary:
     def engorge(self, source_text):
         self.source_texts += [source_text]
         last_word = False
-        for word in split_text(source_text):
+        words = split_text(source_text)
+        first_word = words[0]
+        for word in words:
             if last_word is False:
                 last_word = word
                 continue
             else:
               self.__register_word_tuple((last_word, word))
               last_word = word
+        # consider the first word in the source text to follow the last word
+        self.__register_word_tuple((last_word, first_word))
+
+
+    def get_lexicon(self):
+      """
+      Returns a list of all of the words known by this markov dictionary.
+      """
+      return list(self.prob_tree.keys())
 
     def disgorge(self, length=666):
-      first_word = random.choice(self.prob_tree.keys())
+      first_word = random.choice(self.get_lexicon())
       words = [first_word]
-      for i in range(1,length+1):
+      for i in range(1,length):
         last_word = words[-1]
-        words += [random.choice(choices(dict_of(self.prob_tree[last_word])))]
+        possible_next_words = choices(dict_of(self.prob_tree[last_word]))
+        words += [random.choice(possible_next_words)]
       return string.join(words, ' ')
 
     def __register_word_tuple(self, word_tuple):
       first_word, second_word = word_tuple
       register_word(self.prob_tree, first_word)
+      register_word(self.prob_tree, second_word)
       root_node = dict_of(self.prob_tree[first_word])
       register_word(root_node, second_word)
