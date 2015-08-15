@@ -10,7 +10,7 @@ from dadapy.markov import MarkovDictionary
 def main():
     args = parse_args()
     text = read_infiles(args)
-    md = MarkovDictionary(text)
+    md = MarkovDictionary(text, chunk=args.chunk)
     word_count = args.words
     print(md.disgorge(word_count))
 
@@ -20,6 +20,9 @@ def parse_args():
     parser.add_argument("--words","-w",
             help="length of output in words", 
             nargs="?", type=int, default=50)
+    parser.add_argument("--chunk","-c",
+            help="extract a chunk of the provided length from each text"
+            nargs="?", type=int)
     return parser.parse_args()
 
 def read_infiles(args):
@@ -27,6 +30,7 @@ def read_infiles(args):
     text = ""
     for infile in args.text:
         text += open(infile).read()
+
     return text
 
 if __name__ == "__main__":
