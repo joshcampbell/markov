@@ -1,3 +1,6 @@
+
+
+
 # Is this a sensible data structure?
 
 <pre>
@@ -18,8 +21,6 @@ When building a table, you should limit the maximum depth.
 
 # Needful Things
 
-- Establish unit tests
-  - Check libmorris for a template
 - Redo the word tuple registration algorithm to be recursive.
   - Allow a depth greater than two
   - Do we merge contextual probabilities with root probabilities?

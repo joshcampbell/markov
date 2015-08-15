@@ -20,7 +20,6 @@ class TestTwoWordInput(TestCase):
 
   def test_disgorging_ten_words(self):
     output = self.dictionary.disgorge(10)  
-    import ipdb; ipdb.set_trace()
     length = len(output.split(" "))
     self.assertEqual(length, 10)
 

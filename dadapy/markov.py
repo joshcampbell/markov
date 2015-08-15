@@ -3,6 +3,8 @@ import random
 import string
 import sys
 
+from dadapy.cleaner import clean
+
 # # Is this a sensible data structure?
 #
 # <pre>
@@ -71,13 +73,6 @@ def split_text(text):
 def words_in(markov_node):
     return markov_node[1].keys()
 
-def clean(text):
-  return ''.join(letter for letter in text if is_clean(letter))
-
-def is_clean(letter):
-  """ isalnum() means "is alphanumeric" """
-  return char.isalnum() or char in TOLERABLE_PUNCTUATION
-
 # these should also be in a module somewhere
 
 dict2list = lambda dic: [(k, v) for (k, v) in dic.iteritems()]
@@ -95,7 +90,7 @@ class MarkovDictionary:
        self.engorge(open("./fodder/%s"%filename).read()) 
 
     def engorge(self, source_text):
-        self.source_texts += [source_text]
+        self.source_texts += [clean(source_text)]
         last_word = False
         words = split_text(source_text)
         first_word = words[0]
