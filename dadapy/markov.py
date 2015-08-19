@@ -3,126 +3,70 @@ import random
 import string
 import sys
 
+from Queue import Queue
+
 from dadapy.cleaner import clean
-
-# # Is this a sensible data structure?
-#
-# <pre>
-# {
-#   personal: {
-#     health: (5, { fund: (1, {bullshit:(1,{})})}
-#                   management: (1,{}))
-#     problem: (3, {to:(1,{me:(1,{})})})
-#     bullshit: (2, {problem:(1,{})})
-#   }
-# }
-# </pre>
-
-TOLERABLE_PUNCTUATION = list(" !.?")
-
-# look, a a big pile of functions pertaining to a
-# composite data structure. i wonder how we should
-# clean them up ???????
-
-# let's try thinking about it in these terms:
-
-# ProbNode: a list of [int, ProbTree]
-#   increment
-#   get_subtree
-# ProbTree: a dict of { string => ProbNode }
-#   random_word
-#   upsert_word
-#   __insert_word
-
-def is_markov_node(a_tuple):
-    return a_tuple[0] is int and a_tuple[1] is dict
-
-def new_markov_node(count=0):
-    return [count, {}]
-
-def dict_of(markov_node):
-    return markov_node[1]
-
-def dict_as_pairs_of(markov_node):
-    return dict_of(markov_node).iteritems()
-
-def count_of(markov_node):
-    return markov_node[0]
-
-def increment(markov_node):
-    markov_node[0] += 1
-
-def choices(markov_dict):
-  words = []
-  for tup in dict2list(markov_dict):
-    name, markov_node = tup
-    count, subdict = markov_node
-    for i in range(0,count):
-      words.append(name)
-  return words 
-
-def register_word(prob_tree, word):
-  if word in prob_tree.keys(): increment(prob_tree[word])
-  else: prob_tree[word] = new_markov_node(1)
-        
-# these text tools belong in a namespace
-
-def split_text(text):
-    return text.split(" ")
-
-def words_in(markov_node):
-    return markov_node[1].keys()
-
-# these should also be in a module somewhere
-
-dict2list = lambda dic: [(k, v) for (k, v) in dic.iteritems()]
-list2dict = lambda lis: dict(lis)
 
 class MarkovDictionary:
     """ Manages a nested dict of contextual word occurance probabilities """
-    def __init__(self, *source_texts):
-        self.source_texts = []
-        self.prob_tree = {}
-        for source_text in source_texts:
-            self.engorge(source_text)
+    def __init__(self, source_text=None, depth=2, chunk=5):
+      # there must be at least depth + 1 words in the source text
+      # depth cannot be less than 2
+      self.depth = depth
+      self.key_length = self.depth - 1
+      self.contexts = {}
+      if source_text != None:
+        self.engorge(source_text)
 
-    def eat_file(self, filename):
-       self.engorge(open("./fodder/%s"%filename).read()) 
+    def __is_buffer_full(self, word_buffer):
+        return len(word_buffer) == self.depth
 
     def engorge(self, source_text):
-        self.source_texts += [clean(source_text)]
-        last_word = False
-        words = split_text(source_text)
-        first_word = words[0]
-        for word in words:
-            if last_word is False:
-                last_word = word
-                continue
-            else:
-              self.__register_word_tuple((last_word, word))
-              last_word = word
-        # consider the first word in the source text to follow the last word
-        self.__register_word_tuple((last_word, first_word))
+      words = clean(source_text).split()
+      word_buffer = []
+      for word in words:
+          if self.__is_buffer_full(word_buffer):
+              word_buffer.remove(word_buffer[0])
+          word_buffer.append(word)
+          if self.__is_buffer_full(word_buffer):
+              self.__upsert_words(word_buffer)
+      # the rest of this method is special case handling for the text's end
+      # (it links the first word with the final context)
+      word_buffer.remove(word_buffer[0])
+      word_buffer.append(words[0])
+      self.__upsert_words(word_buffer)
 
+    def __upsert_words(self, words):
+      context = string.join(words[0:-1])
+      word = words[-1]
+      if self.contexts.get(context, None) == None:
+          self.contexts[context] = {}
+      if self.contexts[context].get(word, None) == None:
+          self.contexts[context][word] = 0
+      self.contexts[context][word] += 1
 
     def get_lexicon(self):
-      """
-      Returns a list of all of the words known by this markov dictionary.
-      """
-      return list(self.prob_tree.keys())
+      words = []
+      for word_dict in self.contexts.values():
+        words += word_dict.keys()
+      return words
 
-    def disgorge(self, length=666):
-      first_word = random.choice(self.get_lexicon())
-      words = [first_word]
-      for i in range(1,length):
-        last_word = words[-1]
-        possible_next_words = choices(dict_of(self.prob_tree[last_word]))
-        words += [random.choice(possible_next_words)]
-      return string.join(words, ' ')
+    def __last_context_index(self):
+      return -1 * (self.key_length + 1)
 
-    def __register_word_tuple(self, word_tuple):
-      first_word, second_word = word_tuple
-      register_word(self.prob_tree, first_word)
-      register_word(self.prob_tree, second_word)
-      root_node = dict_of(self.prob_tree[first_word])
-      register_word(root_node, second_word)
+    def __last_context(self, word_list):
+      last_context_index = self.__last_context_index()
+      return word_list[last_context_index:-1]
+
+    def disgorge(self, length=60):
+      # TODO: special case handling for length < depth
+      word_list = random.choice(self.contexts.keys()).split()
+      for i in range(0, length - self.key_length): 
+        if(len(word_list) == self.key_length):
+            key = string.join(word_list)
+        else:
+            key = string.join(self.__last_context(word_list))
+        followers = self.contexts[key]
+        next_word = random.choice(followers.keys())
+        word_list.append(next_word)
+      return string.join(word_list)
