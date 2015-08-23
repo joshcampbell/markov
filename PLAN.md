@@ -1,36 +1,19 @@
-- mixed-depth markov structures?
+# Needful
 
-
-# Is this a sensible data structure?
-
-<pre>
-# s/tuple/list - counts are mutable
-{
-  personal: {
-    health: (5, { fund: (1, {bullshit:(1,{})})}
-                  management: (1,{}))
-    problem: (3, {to:(1,{me:(1,{})})})
-    bullshit: (2, {problem:(1,{})})
-  }
-}
-</pre>
-
-A probability table is a hash.  Each hash value is a word occuring in the source text. Each hash key is a list containing a count of occurences of that word at 0 and nested probability table at 1.
-
-When building a table, you should limit the maximum depth.
-
-# Needful Things
-
-- Redo the word tuple registration algorithm to be recursive.
-  - Allow a depth greater than two
-  - Do we merge contextual probabilities with root probabilities?
-    - Do we weigh them?
 - Get better at handling obscure unicode punctuation
   - String#isalnum() lets a lot of shit through
   - Consider some kinds of punctuation as words?
 
 # Ideas
 
+- give insight into the structure of a markov dictionary
+  - identify n-grams that serve as junctions
+  - whatever low-hanging fruit NLTK provides
+  - identify uncommon words
+    - maybe ones that don't appear in Basic English?
+    - other corpuses
+  - charts
+- mixed-depth markov structures?
 - Explicit text sculpture / subtractive composition workflow
   - Save diffs
 - Use chunks of existing texts to fill in a predefined meter.

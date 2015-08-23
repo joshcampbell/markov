@@ -44,7 +44,7 @@ def index():
 
 @app.route("/markov", methods=['POST'])
 def markov():
-  return MarkovDictionary(request.get_data()).disgorge(60)
+  return MarkovDictionary(request.get_data()).disgorge(600)
 
 if __name__ == '__main__':
     app.run(

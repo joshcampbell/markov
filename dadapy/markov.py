@@ -79,7 +79,7 @@ class MarkovDictionary:
       last_ngram_index = self.__last_ngram_index()
       return word_list[last_ngram_index:]
 
-    def disgorge(self, length=60):
+    def disgorge(self, length=600):
       # TODO: special case handling for length < depth
       word_list = random.choice(self.ngrams.keys()).split()
       for i in range(0, length - self.key_length): 
