@@ -7,6 +7,27 @@ from Queue import Queue
 
 from dadapy.cleaner import clean
 
+class nGram:
+    """ Mutable n-gram class for use in markov dictionaries.
+        the idea is that it's filled one word at a time as
+        the code consuming it iterates on a list of words.
+    """
+
+    def __init__(self, n):
+        self.n = n
+        self.words = []
+
+    def is_full():
+        return len(self.words) == self.n
+
+    def cycle(self, word):
+        if self.is_full():
+            self.words.remove(self.words[0])
+        self.words.append(word)
+
+    def as_key():
+        return string.join(self.words)
+
 class MarkovDictionary:
     """ Manages a nested dict of ngramual word occurance probabilities """
     def __init__(self, source_text=None, depth=3, chunk=5):

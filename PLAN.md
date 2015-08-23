@@ -1,4 +1,4 @@
-
+- mixed-depth markov structures?
 
 
 # Is this a sensible data structure?
